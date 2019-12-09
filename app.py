@@ -21,9 +21,7 @@ def get_statistics(username: str, password: str) -> dict:
 
     # Login and get a tocken from PocketCasts
     login_url = "https://api.pocketcasts.com/user/login"
-    data = (
-        f'{{"email":"{username}","password":"{password}","scope":"webplayer"}}'
-    )
+    data = f'{{"email":"{username}","password":"{password}","scope":"webplayer"}}'
     headers = {"Origin": "https://play.pocketcasts.com"}
     response = request("POST", login_url, data=data, headers=headers).json()
 
