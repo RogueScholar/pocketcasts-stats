@@ -1,7 +1,8 @@
 import json
+
+from airtable import Airtable
 from environs import Env
 from requests import request
-from airtable import Airtable
 
 
 def get_statistics(username: str, password: str) -> dict:
