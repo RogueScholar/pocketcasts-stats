@@ -127,10 +127,8 @@ if previous_record:
     # Allow to omit actually writing to the database by an environment variable
     if not DEBUG:
         # Insert it into Airtable - we need to be sure we want it
-        if (
-            previous_record[0]["fields"] != record
-            and record["Delta (timeListened)"] != 0
-        ):
+        if (previous_record[0]["fields"] != record
+                and record["Delta (timeListened)"] != 0):
             airtable.insert(record)
             if INFO:
                 print("[INFO] Written new entry to Airtable.")
@@ -145,7 +143,6 @@ else:
         airtable.insert(record)
         if INFO:
             print("[INFO] Written the first entry to Airtable.")
-
 
 # Print the data
 print(json.dumps(record, sort_keys=True, indent=4))
