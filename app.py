@@ -1,7 +1,8 @@
 import json
+
+from airtable import Airtable
 from environs import Env
 from requests import request
-from airtable import Airtable
 
 
 def get_statistics(username: str, password: str) -> dict:
@@ -21,9 +22,7 @@ def get_statistics(username: str, password: str) -> dict:
 
     # Login and get a tocken from PocketCasts
     login_url = "https://api.pocketcasts.com/user/login"
-    data = (
-        f'{{"email":"{username}","password":"{password}","scope":"webplayer"}}'
-    )
+    data = f'{{"email":"{username}","password":"{password}","scope":"webplayer"}}'
     headers = {"Origin": "https://play.pocketcasts.com"}
     response = request("POST", login_url, data=data, headers=headers).json()
 
@@ -128,10 +127,8 @@ if previous_record:
     # Allow to omit actually writing to the database by an environment variable
     if not DEBUG:
         # Insert it into Airtable - we need to be sure we want it
-        if (
-            previous_record[0]["fields"] != record
-            and record["Delta (timeListened)"] != 0
-        ):
+        if (previous_record[0]["fields"] != record
+                and record["Delta (timeListened)"] != 0):
             airtable.insert(record)
             if INFO:
                 print("[INFO] Written new entry to Airtable.")
@@ -146,7 +143,6 @@ else:
         airtable.insert(record)
         if INFO:
             print("[INFO] Written the first entry to Airtable.")
-
 
 # Print the data
 print(json.dumps(record, sort_keys=True, indent=4))
