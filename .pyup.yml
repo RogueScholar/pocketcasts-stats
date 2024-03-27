@@ -1,4 +1,9 @@
-# see https://pyup.io/docs/configuration/ for all available options
-
-update: all
+# SPDX-FileCopyrightText:  © 2018, Niklas Heer <me@nheer.io>
+#
+# SPDX-License-Identifier: MIT
+# ----------------------------------------------------------------------------
+# See <https://pyup.io/docs/configuration/> for all available options.
+---
 schedule: "every day"
+update: all
+...

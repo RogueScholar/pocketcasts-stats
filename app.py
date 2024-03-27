@@ -1,12 +1,17 @@
+# SPDX-FileCopyrightText: © 2018-2019, Niklas Heer <me@nheer.io>
+# SPDX-FileCopyrightText: 🄯 2024, Peter J. Mello <admin@petermello.net>
+#
+# SPDX-License-Identifier: MIT
+"""Retrieve listening statistics from the Pocket Casts API and print as JSON."""
 import json
 
 from airtable import Airtable
 from environs import Env
-from requests import request
+from requests import RequestException, request
 
 
 def get_statistics(username: str, password: str) -> dict:
-    """Gets the user statistics from the PocketCasts API
+    """Gets the user statistics from the Pocket Casts API.
 
     Parameters
     ----------
@@ -17,24 +22,27 @@ def get_statistics(username: str, password: str) -> dict:
 
     Returns
     -------
-    An dict all the statistics about your profile.
+    A dict of all the statistics about the user's profile.
     """
 
-    # Login and get a tocken from PocketCasts
+    # Login and get a token from Pocket Casts.
     login_url = "https://api.pocketcasts.com/user/login"
     data = f'{{"email":"{username}","password":"{password}","scope":"webplayer"}}'
     headers = {"Origin": "https://play.pocketcasts.com"}
-    response = request("POST", login_url, data=data, headers=headers).json()
+    response = request(
+        method="POST", url=login_url, data=data, headers=headers, timeout=30
+    ).json()
 
     if "message" in response:
-        raise Exception("Login Failed")
+        raise RequestException("Login failed.")
     else:
         token = response["token"]
 
-    # Get the statistics through the API
+    # Get the statistics through the Pocket Casts API.
     req = request(
-        "POST",
-        "https://api.pocketcasts.com/user/stats/summary",
+        method="POST",
+        url="https://api.pocketcasts.com/user/stats/summary",
+        timeout=30,
         data=("{}"),
         headers={
             "Authorization": f"Bearer {token}",
@@ -44,7 +52,7 @@ def get_statistics(username: str, password: str) -> dict:
     )
 
     if not req.ok:
-        raise Exception("Invalid request")
+        raise RequestException("Invalid request.")
 
     return req.json()
 
@@ -55,7 +63,7 @@ def enrich_with_delta(record: dict, previous_record: dict) -> dict:
     Parameters
     ----------
     record : dict
-        The statistics record from PocketCasts as a dict.
+        The statistics record from Pocket Casts as a dict.
     previous_record : dict
         The most current record in Airtable.
 
@@ -65,18 +73,18 @@ def enrich_with_delta(record: dict, previous_record: dict) -> dict:
     """
     enriched_record = dict(record)
 
-    # Calculate time deltas for all keys in stats
+    # Calculate time deltas for all keys in stats.
     for key, _ in record.items():
         enriched_record[f"Delta ({key})"] = record[key] - previous_record[key]
 
     return enriched_record
 
 
-# Handle environment variables
+# Handle environment variables.
 env = Env()
 env.read_env()
 
-# Override in env.txt for local development
+# Read logging overrides from environment variables for local development.
 DEBUG = env.bool("DEBUG", default=False)
 INFO = env.bool("INFO", default=False)
 
@@ -84,20 +92,20 @@ INFO = env.bool("INFO", default=False)
 # PocketCasts
 ##############################
 
-# Get the statistics from PocketCasts
-record = get_statistics(env("POCKETCASTS_EMAIL"), env("POCKETCASTS_PASSWORT"))
+# Get the statistics from Pocket Casts.
+record = get_statistics(env("POCKETCASTS_EMAIL"), env("POCKETCASTS_PASSWORD"))
 
-# Delete the start date because we don't need it
+# Delete the start date because we don't need it.
 del record["timesStartedAt"]
 
-# Convert everything to int
+# Convert everything to integers.
 record = dict((k, int(v)) for k, v in record.items())
 
 ##############################
 # Airtable
 ##############################
 
-# The API key for Airtable is provided by AIRTABLE_API_KEY automatically
+# The API key for Airtable is provided by the  AIRTABLE_API_KEY variable.
 airtable = Airtable(env("AIRTABLE_BASE_ID"), env("AIRTABLE_POCKETCASTS_TABLE"))
 
 # Get previous record to calculate delta(s)
@@ -119,16 +127,18 @@ previous_record = airtable.get_all(
     ],
 )
 
-# Check if it is the first time we are doing it
+# Check if this is the first time we are running.
 if previous_record:
-    # Enrich record with delta data
+    # Enrich record with delta data.
     record = enrich_with_delta(record, previous_record[0]["fields"])
 
-    # Allow to omit actually writing to the database by an environment variable
+    # Allow an environment variable to omit the step of writing to the database.
     if not DEBUG:
-        # Insert it into Airtable - we need to be sure we want it
-        if (previous_record[0]["fields"] != record
-                and record["Delta (timeListened)"] != 0):
+        # Insert new record into Airtable, but we need to be sure we want it.
+        if (
+            previous_record[0]["fields"] != record
+            and record["Delta (timeListened)"] != 0
+        ):
             airtable.insert(record)
             if INFO:
                 print("[INFO] Written new entry to Airtable.")
@@ -136,7 +146,7 @@ if previous_record:
             if INFO:
                 print("[INFO] Skip writing empty entry.")
 else:
-    # We are inserting for the first time
+    # This is the first run.
     record = enrich_with_delta(record, record)
 
     if not DEBUG:

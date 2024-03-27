@@ -1,5 +1,9 @@
-requests==2.31.0
-airtable-python-wrapper==0.15.3
-environs==9.5.0
-pytest==7.2.1
-pytest-cov==4.0.0
+# SPDX-FileCopyrightText: © 2018-2023, Niklas Heer <me@nheer.io>
+# SPDX-FileCopyrightText: 🄯 2024, Peter J. Mello <admin@petermello.net>
+#
+# SPDX-License-Identifier: MIT
+airtable-python-wrapper >= 0.15.3
+environs >= 10.1.0
+pytest >= 7.3.2
+pytest-cov >= 4.0.0
+requests >= 2.31.0

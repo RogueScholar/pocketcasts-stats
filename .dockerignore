@@ -1,10 +1,13 @@
-node_modules
-npm-debug.log
-Dockerfile*
-docker-compose*
+# SPDX-FileCopyrightText:  © 2018, Niklas Heer <me@nheer.io>
+#
+# SPDX-License-Identifier: MIT
 .dockerignore
 .git
 .gitignore
-README.md
-LICENSE
 .vscode
+node_modules
+Dockerfile*
+LICENSE
+README.md
+docker-compose*
+npm-debug.log

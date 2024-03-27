@@ -1,4 +1,8 @@
-# See https://hub.docker.com/r/library/python/
+# SPDX-FileCopyrightText: © 2018, Niklas Heer <me@nheer.io>
+#
+# SPDX-License-Identifier: MIT
+# ----------------------------------------------------------------------------
+# See <https://hub.docker.com/r/library/python/> for more information.
 FROM python:3.7-alpine
 
 LABEL Name=pocketcasts-stats

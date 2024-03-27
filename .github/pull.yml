@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 🄯 2024, Peter J. Mello <admin@petermello.net>
+#
+# SPDX-License-Identifier: CC0-1.0
+---
+version: "1"
+rules:
+  - base: master
+    upstream: niklas-heer:master
+    mergeMethod: rebase
+    mergeUnstable: false
+    assignees:
+      - RogueScholar
+    reviewers:
+      - RogueScholar
+    conflictReviewers:
+      - RogueScholar
+label: ":arrow_heading_down: pull"
+conflictLabel: "merge-conflict"
+...

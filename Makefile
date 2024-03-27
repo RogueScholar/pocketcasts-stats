@@ -1,5 +1,9 @@
+# SPDX-FileCopyrightText: © 2018, Niklas Heer <me@nheer.io>
+#
+# SPDX-License-Identifier: MIT
+
 # Variables
-NAME = "pocketcasts-stats"
+NAME ::= "pocketcasts-stats"
 
 all: build run
 

@@ -1,7 +1,10 @@
-.vscode/*
-.env/*
-.env
-__pycache__/*
-.pytest_cache/*
+# SPDX-FileCopyrightText:  © 2018, Niklas Heer <me@nheer.io>
+#
+# SPDX-License-Identifier: MIT
+.env/
+.pytest_cache/
+.vscode/
+__pycache__/
 .coverage
+.env
 cov.xml

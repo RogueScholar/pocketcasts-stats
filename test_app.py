@@ -1,4 +1,8 @@
-import pytest
+# SPDX-FileCopyrightText: © 2018, Niklas Heer <me@nheer.io>
+# SPDX-FileCopyrightText: 🄯 2024, Peter J. Mello <admin@petermello.net>
+#
+# SPDX-License-Identifier: MIT
+"""Test pocketcasts-stats is updating records consistent with expectations."""
 from app import enrich_with_delta
 
 
@@ -44,4 +48,3 @@ def test_enrich_with_delta():
     assert (
         enrich_with_delta(current_record, previous_record) != previous_record
     )
-
